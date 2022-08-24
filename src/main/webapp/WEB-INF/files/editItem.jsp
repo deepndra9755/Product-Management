@@ -1,5 +1,8 @@
 <%@taglib uri = "http://www.springframework.org/tags/form" prefix = "form"%>
 <body>
+<script type="text/javascript">
+
+</script>
 <h2>Product Management </h2>
       <form:form method = "POST" action = "edit" modelAttribute="form">
          <table>
