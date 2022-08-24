@@ -2,6 +2,6 @@
     pageEncoding="ISO-8859-1"%>
 
 <body>
-<jsp:forward page="ProductManagement/welcome"/>
+<jsp:forward page="welcome"/>
 </body>
 </html>

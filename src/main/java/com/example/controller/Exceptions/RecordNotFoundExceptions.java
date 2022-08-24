@@ -3,14 +3,8 @@ package com.example.controller.Exceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Not such kind of item is there")
+@ResponseStatus(value =HttpStatus.NOT_FOUND,reason = "Given Id Base Record Is Not There")
 public class RecordNotFoundExceptions extends RuntimeException {
+	private static final long serialVersionUID = 1L;
 
-	public RecordNotFoundExceptions(String msg) {
-		super(msg);
-	}
-
-	public RecordNotFoundExceptions() {
-		super();
-	}
 }

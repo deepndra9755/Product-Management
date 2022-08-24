@@ -5,7 +5,10 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import com.example.bo.Product;
@@ -39,7 +42,7 @@ public class IProductManagementImpl implements IProductManagement {
 	public void deleteRecord(Integer id) throws Exception {
 		// TODO Auto-generated method stub
 		try {
-			Optional record = repo.findById(id);
+			Optional<Product> record = repo.findById(id);
 			if (record.isPresent()) {
 				repo.deleteById(id);
 				return;
@@ -53,17 +56,18 @@ public class IProductManagementImpl implements IProductManagement {
 	}
 
 	@Override
-	public List<ProductDtoImpl> findAllRecords() throws Exception {
+	public List<ProductDtoImpl> findAllRecords() throws RecordNotFoundExceptions, Exception {
 		// TODO Auto-generated method stub
 		try {
 			List<Product> retiveProductList = repo.findAll();
-			if (!retiveProductList.isEmpty()) {
+			if (!retiveProductList.isEmpty())
 				return Mapper.toGetProductDtoList(retiveProductList);
-			}
-			throw new RuntimeException("record not there");
+			else
+				throw new RecordNotFoundExceptions();
 
+		} catch (RecordNotFoundExceptions e) {
+			throw e;
 		} catch (Exception e) {
-			// TODO: handle exception
 			throw e;
 		}
 
@@ -75,7 +79,6 @@ public class IProductManagementImpl implements IProductManagement {
 		try {
 			Page<Product> page1 = repo.findAll(page);
 			List<Product> retiveProductList = page1.getContent();
-			// List<Product> retiveProductList = repo.findAll();
 			if (!retiveProductList.isEmpty()) {
 				return Mapper.toGetProductDtoList(retiveProductList);
 			}
@@ -88,16 +91,21 @@ public class IProductManagementImpl implements IProductManagement {
 	}
 
 	@Override
-	public ProductDtoImpl findByID(Integer id) throws Exception {
+	public ProductDtoImpl findByID(Integer id) throws RecordNotFoundExceptions, Exception {
 		// TODO Auto-generated method stub
 		try {
 			Optional<Product> optional = repo.findById(id);
 			if (optional.isPresent()) {
 				return Mapper.toGetProductDtoImpl(optional.get());
 			}
-			throw new RuntimeException("Record Not There");
+			throw new RecordNotFoundExceptions();
 
-		} catch (Exception e) {
+		} catch (RecordNotFoundExceptions e) {
+			// TODO: handle exception
+			throw e;
+		}
+
+		catch (Exception e) {
 			// TODO: handle exception
 			throw e;
 		}
@@ -135,7 +143,40 @@ public class IProductManagementImpl implements IProductManagement {
 		if (!retrivalItems.isEmpty()) {
 			return Mapper.toGetProductDtoList(retrivalItems);
 		}
+		throw new RecordNotFoundExceptions();
+	}
 
-		throw new RecordNotFoundExceptions("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+	@Override
+	public List<ProductDtoImpl> findAllRecords(Integer start, String sortBy) throws Exception {
+		// TODO Auto-generated method stub
+		try {
+			Pageable pageable = null;
+			pageable = PageRequest.of(start - 1, 10, Sort.by(Order.asc(sortBy)));
+			Page<Product> page = repo.findAll(pageable);
+			if (!page.isEmpty()) {
+				List<Product> productList = page.getContent();
+				return Mapper.toGetProductDtoList(productList);
+			}
+			throw new RecordNotFoundExceptions();
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw e;
+		}
+	}
+
+	@Override
+	public List<ProductDtoImpl> findProduct(String name, Float price, Float to) throws Exception {
+		// TODO Auto-generated method stub
+		try {
+			List<Product> retriveList = repo.findProduct(name, price, to);
+			if (!retriveList.isEmpty())
+				return Mapper.toGetProductDtoList(retriveList);
+			else
+				throw new RuntimeException();
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw e;
+		}
+
 	}
 }
